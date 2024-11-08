@@ -26,6 +26,7 @@ int main() {
     return 0;
 }
 //lab2 2
+// it's c++
 #include <iostream>
 #include <cmath>
 using namespace std;
