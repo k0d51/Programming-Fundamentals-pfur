@@ -1,76 +1,183 @@
 #include <iostream>
-#include <vector>
 #include <string>
-
 using namespace std;
 
-    struct Node {
-        string Name;
-        int age;
-        double score;
-        
-        Node* next;
-    };
+struct Node {
+    string Name;
+    int age;
+    double salary;
+    Node* next;
     
+    Node(string n, int a, double s) : Name(n), age(a), salary(s), next(nullptr) {}
+};
+
+int findIndex(Node* head, string name) {
+    Node* curr;
+    Node* nextn;
+    curr = head;
+    nextn = curr->next;
+    int ctr = 1;
+    while (nextn != nullptr) {
+        if (curr->Name == name) {
+            return ctr;
+        } else {
+            curr = nextn;
+            nextn = curr->next;
+            ctr++;
+        }
+    }
+    return ctr;
+};
 
 int main() {
-    
-    vector<Node> list;
-    Node A;
-    
-    // administration
-    bool adm = true;
-    while (adm) {
-	    cout << "To change info type 1";
-    	cout << "\nTo add to the top type 2";
-	    cout << "\nTo add to the end type 3";
-	    cout << "\nTo delete type 4";
-	    cout << "\nTo print type 5";
-	    cout << "\nTo exit type 0";
-        int S;
-        cin >> S;
-        switch (S) {
-            case 1:
-            {
-                cout << "Name: \n"; cin >> A.Name;
-                cout << "Age: \n"; cin >> A.age;
-                cout << "Score: \n"; cin >> A.score;
+    Node* head = nullptr;       
+    Node* ptr = nullptr;
+    int choice, age;
+    string name, index;
+    double salary;
+
+    do {
+        cout << "\nLinked List Operations:\n";
+        cout << "1. Create future node\n";
+        cout << "2. Insert at start\n";
+        cout << "3. Insert at end\n";
+        cout << "4. Erase by name\n";
+        cout << "5. Print list\n";
+        cout << "6. Add before name\n";
+        cout << "7. Add after name\n";
+        cout << "0. Exit\n";
+        cin >> choice;
+
+        switch(choice) {
+            case 1: { // create node
+                if(ptr) {
+                    delete ptr;
+                    ptr = nullptr;
+                }
+                cout << "Enter name: ";
+                cin >> name;
+                cout << "Enter age: ";
+                cin >> age;
+                cout << "Enter salary: ";
+                cin >> salary;
+                ptr = new Node(name, age, salary);
+                cout << "node created!\n";
+                break;}
+
+            case 2: { //insert start
+                ptr->next = head;
+                head = ptr;
+                ptr = nullptr;
+                cout << "inserted at start!\n";
+                break;}
+
+            case 3: { //insert end
+                if(!head) {
+                    head = ptr;
+                } else {
+                    Node* temp = head;
+                    while(temp->next) {
+                        temp = temp->next;
+                    }
+                    temp->next = ptr;
+                }
+                ptr = nullptr;
+                cout << "inserted at end!\n";
+                break; }
+
+            case 4: { //erase
+                string spes;
+                cout << "Enter name by which to delete: ";
+                cin >> spes;
+                cout << "\n";
+                int ind = findIndex(head, spes);
+                if (ind == 1) {
+                    Node* temp = head;
+                    head = head->next;
+                    delete temp;
+                } else {
+                    Node* current = head;
+                    Node* prev = nullptr;
+                    int count = 1;
+                    while(current && count < ind) {
+                        prev = current;
+                        current = current->next;
+                        count++; }
+                    prev->next = current->next;
+                    delete current;
+                }
+                cout << "\nElement deleted\n";
                 break;
             }
-            case 2:
-            {
-                list.insert(list.begin(), A);
+
+            case 5: { //print
+                if(!head) {
+                    cout << "List is empty!\n";
+                    break;
+                }
+                Node* current = head;
+                cout << "Linked List: \n";
+                while(current) {
+                    cout <<"Name: " << current->Name << ". Age: "<< current->age <<". Salary: " << current->salary << "\n";
+                    current = current->next;
+                }
+                break;}
+
+            case 6: {
+                // add before a specified element
+                string spes;
+                cout << "Enter name to add before it: ";
+                cin >> spes;
+                int ind = findIndex(head, spes);
+                if (ind == 1) {
+                    ptr->next = head;
+                    head = ptr;
+                    ptr = nullptr;
+                } else {
+                    Node* current = head;
+                    Node* prev = nullptr;
+                    int count = 1;
+                    while(current && count < ind) {
+                        prev = current;
+                        current = current->next;
+                        count++; }
+                    prev->next = current->next;
+                    ptr->next = current;
+                    current = ptr;
+                    ptr = nullptr;
+                }
+                cout << "\nElement added\n";
                 break;
             }
-            case 3:
-            {
-                list.push_back(A);
-                break;
-            }
-            case 4:
-            {
-                cout << "Specify element starting from 1";
-                int n;
-                cin >> n;
-                list.erase(list.begin() + n);
-            }
-            case 5:
-            {
-                for (const auto& A: list) {
-                    cout << "\n" << "\nName: \n" << A.Name;
-                    cout << "\nAge: \n" << A.age;
-                    cout << "\nScore: \n" << A.score << "\n";
+
+            case 7: {
+                string spes;
+                cout << "Enter name to add after it: ";
+                cin >> spes;
+                int ind = findIndex(head, spes);
+                Node* current = head;
+                int count = 1;
+                while (current && count < ind) {
+                    current = current->next;
+                    count++;
+                }
+                if (current) {
+                    ptr->next = current->next; 
+                    current->next = ptr;
+                    ptr = nullptr;
+                    cout << "\nElement added after " << spes << "\n";
+                } else {
+                    cout << "\nNode with name " << spes << " not found!\n";
                 }
                 break;
             }
-            case 0: 
-            {
-                adm = false;
-                break;
-            }
+
+            case 0: cout << "Exiting"; break;
+
+            default:
+                cout << "invalid choice!\n";
         }
-    }
-	
-	
+    } while(choice != 0);
+
     return 0;
 }
